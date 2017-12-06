@@ -1,0 +1,88 @@
+
+<a href="/movies/">
+<img class='backbutton' src="/assets/back.jpg" >
+</a>
+<div class="row">
+<div class="col-md-4">
+
+
+<% if @user.user_img.file? %>
+
+  	<%= image_tag @user.user_img.url(:user_show), :class => "profile_picture"%>
+
+<% else %>
+   <img class='profile_picture' src="/assets/default-user.png" >
+
+<% end %>
+
+
+
+	
+	
+</div>
+
+<div class="col-md-8">
+	
+		<h2><%= @user.firstname %> <%= @user.surname %> </h2>
+	<h3><%= @user.email %></h3>
+
+	<h3><%= @user.current_sign_in_at %></h3>
+	<p><%=@user.about_me%></p>
+<%if @user.id == current_user.id %>
+		 <%=link_to "Edit", edit_user_registration_path(@user)%>
+		<%end%>
+
+	
+	</div>
+	</div>	
+
+	<h3><%= @user.firstname %>'s reviews:<h3>
+	<div class="row">
+		
+		<% @reviews.each do |review|%>
+	
+		<div class="col-md-4">
+		<script>
+  			function apiCall() {	
+ 			 	$.getJSON('https://www.omdbapi.com/?t='+ encodeURI('<%=review.movie.title%>')+'&apikey=847f91b9').then(function(response){
+  				var image=response.Poster;
+  			$('.index_img<%=review.movie.id%>').attr('src',image);
+  				})	
+ 			 }
+			apiCall()
+		</script>
+		<div class=movie_frame_user>
+
+			<a href="/movies/<%=review.movie.id%>">
+				<img class="index_img<%=review.movie.id%>" src="/assets/notavailable.jpg" height="200" width= "auto">
+			</a>
+			<div class="inside">
+	 			<%=review.movie.title%>
+
+			<div class = "review-rating" data-score= "<%= review.rating %>"" ></div>
+	 		<%=review.comment%>
+	 		
+
+	 		</div>
+		</div>
+		</div>
+		<%end%>
+
+	
+	
+
+</div>
+<%= paginate @reviews %>
+
+
+
+
+<script>
+	$('.review-rating').raty({
+		readOnly: true,
+		score: function() {
+			return $(this).attr('data-score');
+		},
+		path: '/assets/'
+	});
+</script>

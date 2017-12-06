@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MovieReview</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="sticky-footer-navbar.css" rel="stylesheet">
+  
+</head>
+<body>
+
+  <nav class="navbar navbar-inverse ">
+
+    <div class="container-static">
+
+      <div class="navbar-header">
+
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+        <%= link_to "Movie Review", root_path, class: "navbar-brand" %>
+      </div>
+      
+
+      <div id="navbar" class="navbar-collapse collapse ">
+      <ul class="nav navbar-nav">
+
+        <% if user_signed_in? %>
+         <li><%= link_to "Add movie", new_movie_path %></li>
+      <% end %>
+
+
+      <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Categories <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <% Category.all.each do |category| %>
+              <li class="<%= 'active' if params[:category] == category.name %>">
+                 <%= link_to category.name, movies_path(category: category.name), class: "link" %>
+              </li>
+            <% end %>
+
+          </ul>  
+      </li>
+
+      <li>
+      <%= form_tag search_movies_path, method: :get, class: "navbar-form navbar-left", role: "search," do%>
+      
+        <%= text_field_tag :title, params[:title],id: "movies_search" , placeholder: "Search" ,class: "form-control"%>
+        <%= submit_tag "Search", name: nil, class: "btn btn-default"%>
+        
+      
+      <% end%> 
+      </li>
+        
+      </ul >
+    
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown-header"><hr></li>
+
+      <% if user_signed_in? %>
+      
+        <% if current_user.user_img.file? %>
+          <li>
+             <%= image_tag current_user.user_img.url(:user_index), :class => "profile_tumb"%>
+           </li>
+        <% else %>
+          <li><img class='profile_tumb' src="/assets/default-user.png" >
+          </li>
+        <% end %>
+
+       <% @id = current_user.id  %>
+       
+       <li><%= link_to current_user.firstname, user_path(current_user) %></li>
+
+        <li><%= link_to "Sign out", destroy_user_session_path, method: :delete %></li>
+      <% else %>
+        <li><%= link_to "Log in", new_user_session_path %></li>
+      <% end %>
+          <% if !user_signed_in? %>
+      <li><%= link_to "Sign up", new_user_registration_path %></li>
+    <% end %>
+      
+
+        
+      </ul>
+    </div>
+  
+
+  </nav>
+
+
+
+
+
+<div class="container">
+<%= yield %>
+</div>
+
+    <footer role="contentinfo">
+      
+        <span class="text-muted">Készítette: Biczók Márton </span>
+    
+    </footer>
+
+
+</body>
+
+
+<script>
+  $('.average').raty({
+    readOnly: true,
+    path: '/assets/',
+    score: function() {
+      return $(this).attr('data-score')
+    }
+  });
+</script>
+
+<script>
+    $(document).scroll(function() {
+        $("#navbar").toggleClass("tiny",$(document). scrollTop() > 50);
+    });
+</script>
+
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+</html>
